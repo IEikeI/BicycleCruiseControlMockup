@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">BicycleCruiseControlMockup</string>
+    <string name="tab_text_1">BLE</string>
+    <string name="tab_text_2">Bicycle</string>
+    <string name="tab_text_3">TODO</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="aktivcierung">Aktivierung</string>
+    <string name="senden">Senden</string>
+    <string name="secure_connection">Secure Connection</string>
+    <string name="insecure_connection">Insecure Connection</string>
+    <string name="make_discoverable">Make Discoverable</string>
+    <string name="test_daten">Ping</string>
+    <string name="paired_devices">Paired Devices</string>
+    <string name="other_devices">Other Devices</string>
+    <string name="scan">Scan</string>
+
+    <string name="none_paired">non paired</string>
+    <string name="scanning">scanning ...</string>
+    <string name="select_device">Select Device:</string>
+    <string name="none_found">No Device Found</string>
+    <string name="bt_not_enabled_leaving">BLE is not enabled!</string>
+    <string name="title_not_connected">Not Connected</string>
+    <string name="title_connecting">Connecting ...</string>
+    <string name="title_connected_to">Connected to:</string>
+    <string name="not_connected">Not Connected</string>
+
+    <string name="daten_des_fahrers">Daten des Fahrers</string>
+    <string name="send_manually">Send manually</string>
+    <string name="warnung_zu_hoher_puls">Warnung: zu hoher Puls</string>
+    <string name="_0_00">0.00</string>
+    <string name="text">text</string>
+    <string name="number">number</string>
+    <string name="gechwindigkeit">Gechwindigkeit:</string>
+    <string name="puls">Puls:</string>
+    <string name="name">Name:</string>
+    <string name="id">ID:</string>
+</resources>

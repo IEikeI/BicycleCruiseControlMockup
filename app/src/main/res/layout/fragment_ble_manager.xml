@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context="pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.BLEManageFragment">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="0"
+        android:text="@string/aktivcierung"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+
+
+    <!-- Section for manually bluetooth connection -->
+    <LinearLayout
+        android:id="@+id/bluetooth_connect_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <Button
+            android:id="@+id/button_secure_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/secure_connection" />
+
+        <Button
+            android:id="@+id/button_insecure_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/insecure_connection" />
+
+        <Button
+            android:id="@+id/button_discoverable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/make_discoverable" />
+    </LinearLayout>
+
+    <!-- Section for user content -->
+    <LinearLayout
+        android:id="@+id/user_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+    <TextView
+        android:id="@+id/textView_mode_on"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:text="@string/test_daten"
+        android:textSize="20sp"/>
+
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_emergency"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center_horizontal"
+        app:srcCompat="@android:drawable/ic_dialog_email" />
+
+    </LinearLayout>
+
+    <!-- Section for debug mode-->
+    <ListView
+        android:id="@+id/in"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/command_input_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/edit_text_out"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/button_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/senden" />
+    </LinearLayout>
+
+</LinearLayout>
