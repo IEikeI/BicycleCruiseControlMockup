@@ -22,6 +22,7 @@ public class BLEDevices {
      */
     public BLEDevices() {
         this.discoveredDevices = new ArrayList<BLEDevice>();
+        this.connectedDevices = new ArrayList<BLEDevice>();
     }
 
     /**
@@ -48,9 +49,6 @@ public class BLEDevices {
      */
     public void addConnectedDevice(BLEDevice device){
         if(connectedDevices != null){
-            connectedDevices.add(device);
-        } else {
-            connectedDevices = new ArrayList<BLEDevice>();
             connectedDevices.add(device);
         }
     }

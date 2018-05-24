@@ -61,8 +61,8 @@ public class BLEDeviceAdapter extends RecyclerView.Adapter<BLEDeviceAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         if(mConnectedDevices.get(0) != null){
             holder.mTextViewName.setText(mConnectedDevices.get(position).getName());
-            holder.mTextViewID.setText(mConnectedDevices.get(position).getName());
-            holder.mTextViewUUID.setText(mConnectedDevices.get(position).getName());
+            holder.mTextViewID.setText(String.format("%d", mConnectedDevices.get(position).getDeviceId()));
+            holder.mTextViewUUID.setText(mConnectedDevices.get(position).getUUID());
         } else {
             holder.mTextViewName.setText(R.string.no_device);
             holder.mTextViewID.setText(R.string.no_device);

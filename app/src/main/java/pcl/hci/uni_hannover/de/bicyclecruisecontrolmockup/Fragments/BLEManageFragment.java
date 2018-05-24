@@ -182,7 +182,7 @@ public class BLEManageFragment extends Fragment {
         //get the device name
         deviceName = android.os.Build.MODEL;
 
-        bleDevices = new BLEDevices();
+        bleDevices = new BLEDevices(); //init of arrays
     }
 
     @Override
@@ -241,7 +241,6 @@ public class BLEManageFragment extends Fragment {
         //mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        bleDevices.addConnectedDevice(null); //init
         mAdapter = new BLEDeviceAdapter(bleDevices.getConnectedDevices());
         mRecyclerView.setAdapter(mAdapter);
 
@@ -548,7 +547,7 @@ public class BLEManageFragment extends Fragment {
         int insertIndex = 0;
         if(bleDevices.getConnectedDevices().size() < 1){
             bleDevices.addConnectedDevice(device);
-            removeFromRecView(insertIndex, bleDevices.getConnectedDevices());
+            //removeFromRecView(insertIndex, bleDevices.getConnectedDevices());
             //Snackbar.make(getView(), "Device Name: "+device.getName()+" removed", Snackbar.LENGTH_LONG)
               //      .setAction("Action", null).show();
         } else {
@@ -569,7 +568,9 @@ public class BLEManageFragment extends Fragment {
         if(list.get(position) != null){
             list.remove(position);
         }
-        mRecyclerView.removeViewAt(position);
+        if(mRecyclerView.getChildCount() > 0){
+            mRecyclerView.removeViewAt(position);
+        }
         mAdapter.notifyItemRemoved(position);
         mAdapter.notifyItemRangeChanged(position, list.size());
         mRecyclerView.invalidate();
