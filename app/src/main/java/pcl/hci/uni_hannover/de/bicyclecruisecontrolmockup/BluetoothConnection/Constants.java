@@ -18,10 +18,10 @@ public interface Constants {
     public static final String TOAST = "toast";
 
 
-    // Key names and keys for data transfer and cryptography
-    public static final String COMMAND_ALERT_MODE_ON = "#a_on";
-    public static final String COMMAND_ALERT_MODE_OFF = "#a_off";
-    public static final String ERMERGENCY_EVENT = "#emer";
-    public static final int KEY = 47;
+    // Key names for data transfer and emulation
+    public static final String COMMAND_PING = "#ping_from_"; //+ device name
+    public static final String COMMAND_SPEED = "#speed_value_"; //+ double value
+    public static final String COMMAND_HEARTRATE = "#hr_value_"; //+ double value
+    public static final String COMMAND_HEARTRATE_WARNING = "#hr_warn";
 
 }

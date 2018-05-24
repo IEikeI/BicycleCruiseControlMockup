@@ -32,7 +32,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -107,6 +106,11 @@ public class BLEManageFragment extends Fragment {
      * Member object for the message services (data connection)
      */
     private BluetoothMsgService mMSGService = null;
+
+    /**
+     * List of all services for each device
+     */
+    private BluetoothMsgService[] mMSGServices = null;
 
     /**
      * Name of the device the app is running on
@@ -224,7 +228,7 @@ public class BLEManageFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String message = "#ping "+ deviceName;
-                sendMessage(message);
+                sendMessage(message); //TODO change for multiple services
                 Snackbar.make(view, "Ping sendet from " + deviceName, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -256,31 +260,46 @@ public class BLEManageFragment extends Fragment {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
-        } else if (mMSGService == null) {
-            setupConversation();
+        } else if (mMSGServices == null){
+            setupConversation(0);
         }
+
+        /*else if (mMSGServices != null) {
+            for(int i = 1; i < mMSGServices.length; i++) {
+                if (mMSGServices[i] == null){
+                    setupConversation(0, mMSGService);
+                }
+            }
+        }*/
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mMSGService != null) {
-            mMSGService.stop();
+        if (mMSGServices != null) {
+            for(int i = 1; i < mMSGServices.length; i++) {
+                if (mMSGServices[i] != null) {
+                    mMSGServices[i].stop();
+                }
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        // Performing this check in onResume() covers the case in which BT was
-        // not enabled during onStart(), so we were paused to enable it...
-        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
-        if (mMSGService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mMSGService.getState() == BluetoothMsgService.STATE_NONE) {
-                // Start the Bluetooth chat services
-                mMSGService.start();
+        if (mMSGServices != null) {
+            for(int i = 1; i < mMSGServices.length; i++) {
+                // Performing this check in onResume() covers the case in which BT was
+                // not enabled during onStart(), so we were paused to enable it...
+                // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+                if (mMSGServices[i] != null) {
+                    // Only if the state is STATE_NONE, do we know that we haven't started already
+                    if (mMSGServices[i].getState() == BluetoothMsgService.STATE_NONE) {
+                        // Start the Bluetooth chat services
+                        mMSGServices[i].start();
+                    }
+                }
             }
         }
     }
@@ -293,9 +312,9 @@ public class BLEManageFragment extends Fragment {
     }
 
     /**
-     * Set up the UI and background operations for chat.
+     * Set up the UI and background operations for conversations.
      */
-    private void setupConversation() {
+    private void setupConversation(int index){ //BluetoothMsgService msgService) {
         Log.d(TAG, "setupConversation()");
 
         // Initialize the array adapter for the conversation thread
@@ -314,13 +333,19 @@ public class BLEManageFragment extends Fragment {
                 if (null != view) {
                     TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
                     String message = textView.getText().toString();
-                    sendMessage(message);
+                    sendMessage(message); //TODO change for multiple Services
                 }
             }
         });
 
-        // Initialize the BluetoothChatService to perform bluetooth connections
+        // Initialize the BluetoothMSGService to perform bluetooth connections
+        //msgService = new BluetoothMsgService(getActivity(), mHandler);
         mMSGService = new BluetoothMsgService(getActivity(), mHandler);
+        mMSGServices = new BluetoothMsgService[10]; //fixed size for now
+        //if(!mMSGServices[0].equals(mMSGService)){
+          //  mMSGServices[0] = mMSGService; //index 0 is always the initial handshake
+        //}
+        //mMSGServices[index] = mMSGService;
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
@@ -343,7 +368,7 @@ public class BLEManageFragment extends Fragment {
      *
      * @param message A string of text to send.
      */
-    private void sendMessage(String message) {
+    private void sendMessage(String message){ //BluetoothMsgService msgService) {
         // Check that we're actually connected before trying anything
         if (mMSGService.getState() != BluetoothMsgService.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
@@ -363,6 +388,34 @@ public class BLEManageFragment extends Fragment {
     }
 
     /**
+     * Broadcasts a message.
+     *
+     * @param message A string of text to send to all devices.
+     */
+    private void sendMessageToAll(String message) {
+        //start from index 1, 0 is an placeHolder
+        for(int i = 1; i < mMSGServices.length; i++){
+            // Check that we're actually connected before trying anything
+            if (mMSGServices[i].getState() != BluetoothMsgService.STATE_CONNECTED) {
+                Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Check that there's actually something to send
+            if (message.length() > 0) {
+                // Get the message bytes and tell the BluetoothChatService to write
+                byte[] send = message.getBytes();
+                mMSGServices[i].write(send);
+
+                // Reset out string buffer to zero and clear the edit text field
+                mOutStringBuffer.setLength(0);
+                mOutEditText.setText(mOutStringBuffer);
+            }
+        }
+
+    }
+
+    /**
      * The action listener for the EditText widget, to listen for the return key
      */
     private TextView.OnEditorActionListener mWriteListener
@@ -371,7 +424,7 @@ public class BLEManageFragment extends Fragment {
             // If the action is a key-up event on the return key, send the message
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
-                sendMessage(message);
+                //sendMessage(message);
             }
             return true;
         }
@@ -497,7 +550,7 @@ public class BLEManageFragment extends Fragment {
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
-                    setupConversation();
+                    setupConversation(0);
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
