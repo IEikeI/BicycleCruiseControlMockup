@@ -2,8 +2,6 @@ package pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup;
 
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -18,14 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.TextView;
-
 import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.BLEManageFragment;
 import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.BicycleMonitorFragment;
-import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.EmptyFragment;
+import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.SensorInputFragment;
 
 public class MainActivity extends AppCompatActivity implements BLEManageFragment.OnBLEManageFragmentInteractionListener,
-        EmptyFragment.OnPlaceHolderFragmentInteractionListener, BicycleMonitorFragment.OnBicycleMonitorFragmentInteractionListener {
+        SensorInputFragment.OnSensorInputFragmentInteractionListener, BicycleMonitorFragment.OnBicycleMonitorFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -145,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements BLEManageFragment
                 case 1:
                     return BicycleMonitorFragment.newInstance("", "");
                 case 2:
-                    return EmptyFragment.newInstance("", "");
+                    return SensorInputFragment.newInstance("", "");
             }
             return PlaceholderFragment.newInstance(position + 1);
         }

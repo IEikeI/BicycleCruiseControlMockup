@@ -1,11 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:scrollbars="none"
-    tools:context="pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.BicycleMonitorFragment">
-
+    tools:context="pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.SensorInputFragment">
 
     <TextView
         android:layout_width="match_parent"
@@ -14,7 +12,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="16dp"
         android:layout_weight="0"
-        android:text="@string/daten_des_fahrers"
+        android:text="@string/daten_des_boards"
         android:textAlignment="center"
         android:textSize="24sp" />
 
@@ -34,7 +32,7 @@
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/textViewName"
+            android:id="@+id/textViewNameBoard"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -60,7 +58,33 @@
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/textViewId"
+            android:id="@+id/textViewIdBoard"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="0dp"
+            android:text="@string/number"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/uuid"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textViewUUIDBoard"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -86,27 +110,18 @@
             android:textSize="20sp" />
 
         <EditText
-            android:id="@+id/edittext_send_speed"
+            android:id="@+id/edittext_show_speed"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
             android:layout_marginTop="0dp"
             android:layout_weight="0"
-            android:editable="true"
+            android:inputType="none"
             android:text="@string/_0_00"
             android:textAlignment="center"
             android:textSize="20sp" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/button_send_Speed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/send_manually" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -124,31 +139,28 @@
             android:textSize="20sp" />
 
         <EditText
-            android:id="@+id/edittext_send_heartRate"
+            android:id="@+id/edittext_show_heartRate"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="16dp"
             android:layout_weight="0"
+            android:inputType="none"
             android:text="@string/_0_00"
             android:textAlignment="center"
             android:textSize="20sp" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/button_send_heartRate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/send_manually" />
-
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_weight="0"
+        android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="16dp"
         android:layout_weight="0"
@@ -156,12 +168,18 @@
         android:textAlignment="center"
         android:textSize="20sp" />
 
-    <Button
-        android:id="@+id/button_send_heartRateWarning"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/edittext_show_warning"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:layout_gravity="center_horizontal"
-        android:text="@string/send_manually" />
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="16dp"
+        android:layout_weight="0"
+        android:inputType="none"
+        android:text="@string/no_yes"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+    </LinearLayout>
 
 </LinearLayout>
