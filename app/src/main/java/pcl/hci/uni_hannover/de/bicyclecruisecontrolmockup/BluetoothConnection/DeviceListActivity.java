@@ -198,4 +198,7 @@ public class DeviceListActivity extends Activity {
         }
     };
 
+    public ArrayAdapter<String> getmNewDevicesArrayAdapter() {
+        return mNewDevicesArrayAdapter;
+    }
 }
