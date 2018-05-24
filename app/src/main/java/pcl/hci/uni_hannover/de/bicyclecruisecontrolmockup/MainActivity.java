@@ -17,11 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.BLEManageFragment;
-import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.BicycleMonitorFragment;
+import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.BicycleEmulatedFragment;
 import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.SensorInputFragment;
 
 public class MainActivity extends AppCompatActivity implements BLEManageFragment.OnBLEManageFragmentInteractionListener,
-        SensorInputFragment.OnSensorInputFragmentInteractionListener, BicycleMonitorFragment.OnBicycleMonitorFragmentInteractionListener {
+        SensorInputFragment.OnSensorInputFragmentInteractionListener, BicycleEmulatedFragment.OnBicycleEmulatedFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements BLEManageFragment
                 case 0:
                     return BLEManageFragment.newInstance("", "");
                 case 1:
-                    return BicycleMonitorFragment.newInstance("", "");
+                    return BicycleEmulatedFragment.newInstance("", "");
                 case 2:
                     return SensorInputFragment.newInstance("", "");
             }

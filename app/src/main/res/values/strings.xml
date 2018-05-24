@@ -1,18 +1,18 @@
 <resources>
     <string name="app_name">BicycleCruiseControlMockup</string>
     <string name="tab_text_1">BLE</string>
-    <string name="tab_text_2">Bicycle</string>
-    <string name="tab_text_3">TODO</string>
+    <string name="tab_text_2">Emulated</string>
+    <string name="tab_text_3">Sensor Data</string>
 
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
-    <string name="aktivcierung">Aktivierung</string>
+    <string name="aktivcierung">BLE Activation</string>
     <string name="senden">Senden</string>
     <string name="secure_connection">Secure Connection</string>
     <string name="insecure_connection">Insecure Connection</string>
     <string name="make_discoverable">Make Discoverable</string>
-    <string name="test_daten">Ping</string>
+    <string name="test_daten">Send ping to all</string>
     <string name="paired_devices">Paired Devices</string>
     <string name="other_devices">Other Devices</string>
     <string name="scan">Scan</string>
@@ -26,6 +26,7 @@
     <string name="title_connecting">Connecting ...</string>
     <string name="title_connected_to">Connected to:</string>
     <string name="not_connected">Not Connected</string>
+    <string name="conntected_devices">Conntected Devices:</string>
 
     <string name="daten_des_fahrers">Daten des Fahrers</string>
     <string name="send_manually">Send manually</string>
@@ -37,4 +38,10 @@
     <string name="puls">Puls:</string>
     <string name="name">Name:</string>
     <string name="id">ID:</string>
+
+    <string name="no_yes">no/yes</string>
+    <string name="daten_des_boards">Daten des Boards</string>
+    <string name="uuid">UUID</string>
+    <string name="textview">TextView</string>
+    <string name="no_device">No Device</string>
 </resources>

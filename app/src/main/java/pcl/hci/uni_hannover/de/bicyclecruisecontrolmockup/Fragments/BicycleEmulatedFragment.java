@@ -3,7 +3,6 @@ package pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +13,12 @@ import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OnPlaceHolderFragmentInteractionListener} interface
+ * {@link OnBicycleEmulatedFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link EmptyFragment#newInstance} factory method to
+ * Use the {@link BicycleEmulatedFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class EmptyFragment extends Fragment{
+public class BicycleEmulatedFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -29,13 +28,14 @@ public class EmptyFragment extends Fragment{
     private String mParam1;
     private String mParam2;
 
-
-    private OnPlaceHolderFragmentInteractionListener mListener;
+    private OnBicycleEmulatedFragmentInteractionListener mListener;
 
     /**
-     * This is a placeholder for further implementations
+     * This fragment is the controller for the (GUI) for the simulated bicycle.
+     * It shows all the information on the current speed, heart-rate and other
+     * useful informations for the mockup.
      */
-    public EmptyFragment() {
+    public BicycleEmulatedFragment() {
         // Required empty public constructor
     }
 
@@ -45,11 +45,11 @@ public class EmptyFragment extends Fragment{
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment LiveMapFragment.
+     * @return A new instance of fragment EmergencyContactsFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static EmptyFragment newInstance(String param1, String param2) {
-        EmptyFragment fragment = new EmptyFragment();
+    public static BicycleEmulatedFragment newInstance(String param1, String param2) {
+        BicycleEmulatedFragment fragment = new BicycleEmulatedFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -64,29 +64,24 @@ public class EmptyFragment extends Fragment{
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_placeholder, container, false);
+        View emulatedView = inflater.inflate(R.layout.fragment_bicycle_emulated, container, false);
 
-        return view;
+        return emulatedView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnPlaceHolderFragmentInteractionListener) {
-            mListener = (OnPlaceHolderFragmentInteractionListener) context;
+        if (context instanceof OnBicycleEmulatedFragmentInteractionListener) {
+            mListener = (OnBicycleEmulatedFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -99,24 +94,6 @@ public class EmptyFragment extends Fragment{
         mListener = null;
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -127,7 +104,7 @@ public class EmptyFragment extends Fragment{
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnPlaceHolderFragmentInteractionListener {
+    public interface OnBicycleEmulatedFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:scrollbars="none"
-    tools:context="pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.BicycleMonitorFragment">
+    tools:context="pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.BicycleEmulatedFragment">
 
 
     <TextView

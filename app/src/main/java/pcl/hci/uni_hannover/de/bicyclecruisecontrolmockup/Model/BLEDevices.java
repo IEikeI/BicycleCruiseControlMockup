@@ -19,6 +19,13 @@ public class BLEDevices {
 
     /**
      * Primary usage
+     */
+    public BLEDevices() {
+        this.discoveredDevices = new ArrayList<BLEDevice>();
+    }
+
+    /**
+     * Optinal usage
      * @param discoveredDevices
      */
     public BLEDevices(ArrayList<BLEDevice> discoveredDevices) {
@@ -39,7 +46,7 @@ public class BLEDevices {
      * Works also for initialising
      * @param device
      */
-    private void addConnectedDevice(BLEDevice device){
+    public void addConnectedDevice(BLEDevice device){
         if(connectedDevices != null){
             connectedDevices.add(device);
         } else {

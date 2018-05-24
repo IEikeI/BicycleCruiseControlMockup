@@ -60,28 +60,49 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-    <TextView
-        android:id="@+id/textView_mode_on"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:text="@string/test_daten"
-        android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/textView_mode_on"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:text="@string/test_daten"
+            android:textSize="20sp"/>
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_emergency"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_gravity="center_horizontal"
+            app:srcCompat="@android:drawable/ic_dialog_email" />
 
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_emergency"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_gravity="center_horizontal"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0"
+            android:text="@string/conntected_devices"
+            android:textSize="20sp"/>
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_weight="0"
+        android:scrollbars="horizontal">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_connected"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
+    </RelativeLayout>
 
     <!-- Section for debug mode-->
     <ListView
@@ -100,34 +121,19 @@
         android:orientation="horizontal"
         android:visibility="gone">
 
-        <EditText
-            android:id="@+id/edit_text_out"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight="1"
-            android:inputType="text" />
+            <EditText
+                android:id="@+id/edit_text_out"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:inputType="text" />
 
-        <Button
-            android:id="@+id/button_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/senden" />
+            <Button
+                android:id="@+id/button_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/senden" />
     </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0"
-        android:text="@string/conntected_devices"
-        android:textSize="20sp"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_connected"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0" />
 
 </LinearLayout>

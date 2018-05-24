@@ -32,6 +32,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,10 +46,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.BluetoothConnection.BluetoothMsgService;
 import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.BluetoothConnection.Constants;
 import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.BluetoothConnection.DeviceListActivity;
 import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Logger.Log;
+import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Misc.BLEDeviceAdapter;
+import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Model.BLEDevice;
+import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Model.BLEDevices;
 import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.R;
 
 /**
@@ -101,6 +108,30 @@ public class BLEManageFragment extends Fragment {
      */
     private BluetoothMsgService mMSGService = null;
 
+    /**
+     * Name of the device the app is running on
+     */
+    private String deviceName;
+
+    /**
+     * All devices stored here
+     */
+    private BLEDevices bleDevices;
+
+    /**
+     * View for displaying all connected ble devices
+     */
+    private RecyclerView mRecyclerView;
+
+    /**
+     * Adapter for the recycler view content
+     */
+    private RecyclerView.Adapter mAdapter;
+
+    /**
+     * Manager for the recycler view appearance
+     */
+    private RecyclerView.LayoutManager mLayoutManager;
 
     /**
      * This fragtment is the controller for the (GUI) BLE device manager.
@@ -147,15 +178,20 @@ public class BLEManageFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        //get the device name
+        deviceName = android.os.Build.MODEL;
+
+        bleDevices = new BLEDevices();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View emergencyView = inflater.inflate(R.layout.fragment_ble_manager, container, false);
+        View bleManagerView = inflater.inflate(R.layout.fragment_ble_manager, container, false);
 
-        Button secureScanBtn = (Button) emergencyView.findViewById(R.id.button_secure_scan);
+        Button secureScanBtn = (Button) bleManagerView.findViewById(R.id.button_secure_scan);
         secureScanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,7 +200,7 @@ public class BLEManageFragment extends Fragment {
             }
         });
 
-        Button insecureScanBtn = (Button) emergencyView.findViewById(R.id.button_insecure_scan);
+        Button insecureScanBtn = (Button) bleManagerView.findViewById(R.id.button_insecure_scan);
         insecureScanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -173,7 +209,7 @@ public class BLEManageFragment extends Fragment {
             }
         });
 
-        Button discoverableBtn = (Button) emergencyView.findViewById(R.id.button_discoverable);
+        Button discoverableBtn = (Button) bleManagerView.findViewById(R.id.button_discoverable);
         secureScanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,31 +219,46 @@ public class BLEManageFragment extends Fragment {
         });
 
 
-        FloatingActionButton fab_emer = (FloatingActionButton) emergencyView.findViewById(R.id.fab_emergency);
+        FloatingActionButton fab_emer = (FloatingActionButton) bleManagerView.findViewById(R.id.fab_emergency);
         fab_emer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String message = "#ping";
+                String message = "#ping "+ deviceName;
                 sendMessage(message);
-                Snackbar.make(view, "Ping gesendet", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Ping sendet from " + deviceName, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
 
-        return emergencyView;
+        mRecyclerView = (RecyclerView) bleManagerView.findViewById(R.id.recycler_view_connected);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        //mLayoutManager = new LinearLayoutManager();
+        //mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        bleDevices.addConnectedDevice(null); //init
+        mAdapter = new BLEDeviceAdapter(bleDevices.getConnectedDevices());
+        mRecyclerView.setAdapter(mAdapter);
+
+        return bleManagerView;
     }
 
     @Override
     public void onStart() {
         super.onStart();
         // If BT is not on, request that it be enabled.
-        // setupChat() will then be called during onActivityResult
+        // setupConversation() will then be called during onActivityResult
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
         } else if (mMSGService == null) {
-            setupChat();
+            setupConversation();
         }
     }
 
@@ -245,8 +296,8 @@ public class BLEManageFragment extends Fragment {
     /**
      * Set up the UI and background operations for chat.
      */
-    private void setupChat() {
-        Log.d(TAG, "setupChat()");
+    private void setupConversation() {
+        Log.d(TAG, "setupConversation()");
 
         // Initialize the array adapter for the conversation thread
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
@@ -428,13 +479,26 @@ public class BLEManageFragment extends Fragment {
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, false);
+                    String name = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_NAME);
+                    String UUID = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                    int deviceId = 1;
+                    if(bleDevices.getConnectedDevices() != null){
+                        deviceId = bleDevices.getConnectedDevices().size() +1;
+                    }
+                    BLEDevice device = new BLEDevice(name, UUID, deviceId);
+                    //Snackbar.make(getView(), "Device Name: "+device.getName()+", Address:"+device.getUUID() + deviceName, Snackbar.LENGTH_LONG)
+                      //      .setAction("Action", null).show();
+                    addBLEDevice(device);
+                    mAdapter.notifyDataSetChanged();
+                    mRecyclerView.invalidate();
+                    refreshRecView();
                 }
                 break;
             case REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
-                    setupChat();
+                    setupConversation();
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
@@ -459,6 +523,57 @@ public class BLEManageFragment extends Fragment {
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
         mMSGService.connect(device, secure);
+    }
+
+    /**
+     * Force-redraw to whole fragment
+     * (In this state this is only a work-around)
+     */
+    private void refreshRecView(){
+        if(mAdapter != null){
+            mAdapter.notifyDataSetChanged();
+        }
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .detach(this)
+                .attach(this)
+                .commit();
+    }
+
+    /**
+     * Helper for notifying added BLE connections and Syncs the list-adding and recycler view
+     * @param device
+     */
+    private void addBLEDevice(BLEDevice device){
+        int insertIndex = 0;
+        if(bleDevices.getConnectedDevices().size() < 1){
+            bleDevices.addConnectedDevice(device);
+            removeFromRecView(insertIndex, bleDevices.getConnectedDevices());
+            //Snackbar.make(getView(), "Device Name: "+device.getName()+" removed", Snackbar.LENGTH_LONG)
+              //      .setAction("Action", null).show();
+        } else {
+            bleDevices.addConnectedDevice(device);
+            insertIndex = bleDevices.getCountConnectedDevices();
+            //Snackbar.make(getView(), "Device Name: "+device.getName()+" added", Snackbar.LENGTH_LONG)
+              //   .setAction("Action", null).show();
+        }
+        mAdapter.notifyItemInserted(insertIndex);
+    }
+
+    /**
+     * Helper for notifying removed BLE connections and update the view
+     * @param position
+     * @param list
+     */
+    private void removeFromRecView(int position, ArrayList<BLEDevice> list){
+        if(list.get(position) != null){
+            list.remove(position);
+        }
+        mRecyclerView.removeViewAt(position);
+        mAdapter.notifyItemRemoved(position);
+        mAdapter.notifyItemRangeChanged(position, list.size());
+        mRecyclerView.invalidate();
+        refreshRecView();
     }
 
     @Override
