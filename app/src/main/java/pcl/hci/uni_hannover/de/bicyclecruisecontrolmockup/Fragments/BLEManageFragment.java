@@ -227,7 +227,7 @@ public class BLEManageFragment extends Fragment {
         fab_emer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String message = "#ping "+ deviceName;
+                String message = Constants.COMMAND_PING + deviceName;
                 sendMessage(message); //TODO change for multiple services
                 Snackbar.make(view, "Ping sendet from " + deviceName, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -574,7 +574,8 @@ public class BLEManageFragment extends Fragment {
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
-        mMSGService.connect(device, secure);
+        //mMSGService.connect(device, secure);
+        mMSGService.connect(device);
     }
 
     /**
