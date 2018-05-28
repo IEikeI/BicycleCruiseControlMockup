@@ -532,12 +532,12 @@ public class BLEManageFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
                     connectDevice(data, false);
                     String name = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_NAME);
-                    String UUID = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                    String mac = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
                     int deviceId = 1;
                     if(bleDevices.getConnectedDevices() != null){
                         deviceId = bleDevices.getConnectedDevices().size() +1;
                     }
-                    BLEDevice device = new BLEDevice(name, UUID, deviceId);
+                    BLEDevice device = new BLEDevice(name, mac, deviceId);
                     //Snackbar.make(getView(), "Device Name: "+device.getName()+", Address:"+device.getUUID() + deviceName, Snackbar.LENGTH_LONG)
                       //      .setAction("Action", null).show();
                     addBLEDevice(device);

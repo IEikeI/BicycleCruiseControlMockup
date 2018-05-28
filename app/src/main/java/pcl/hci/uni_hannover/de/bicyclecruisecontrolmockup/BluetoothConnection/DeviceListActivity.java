@@ -1,3 +1,7 @@
+/**
+ * Based on https://github.com/polyclef/BluetoothChatMulti/tree/master/BluetoothChatMulti and modified for its purpose.
+ */
+
 package pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.BluetoothConnection;
 
 import android.app.Activity;

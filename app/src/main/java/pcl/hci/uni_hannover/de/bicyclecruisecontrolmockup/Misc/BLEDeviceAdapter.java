@@ -28,7 +28,7 @@ public class BLEDeviceAdapter extends RecyclerView.Adapter<BLEDeviceAdapter.View
             super(v);
             mTextViewID = v.findViewById(R.id.textViewId);
             mTextViewName = v.findViewById(R.id.textViewName);
-            mTextViewUUID = v.findViewById(R.id.textViewUUID);
+            mTextViewUUID = v.findViewById(R.id.textViewMAC);
         }
     }
 
