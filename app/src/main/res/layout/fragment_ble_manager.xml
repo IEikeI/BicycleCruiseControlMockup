@@ -28,13 +28,13 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-        <Button
+        <!-- <Button
             android:id="@+id/button_secure_scan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_gravity="center_horizontal"
-            android:text="@string/secure_connection" />
+            android:text="@string/secure_connection" /> -->
 
         <Button
             android:id="@+id/button_insecure_scan"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_gravity="center_horizontal"
-            android:text="@string/insecure_connection" />
+            android:text="@string/establish_new_connection" />
 
         <Button
             android:id="@+id/button_discoverable"

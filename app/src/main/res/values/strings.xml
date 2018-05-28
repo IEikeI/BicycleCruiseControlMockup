@@ -9,8 +9,9 @@
 
     <string name="aktivcierung">BLE Activation</string>
     <string name="senden">Senden</string>
-    <string name="secure_connection">Secure Connection</string>
-    <string name="insecure_connection">Insecure Connection</string>
+    <!--<string name="secure_connection">Secure Connection</string>-->
+    <!--<string name="insecure_connection">Insecure Connection</string>-->
+    <string name="establish_new_connection">Establish New Connection</string>
     <string name="make_discoverable">Make Discoverable</string>
     <string name="test_daten">Send ping to all</string>
     <string name="paired_devices">Paired Devices</string>
@@ -44,4 +45,5 @@
     <string name="uuid">UUID</string>
     <string name="textview">TextView</string>
     <string name="no_device">No Device</string>
+
 </resources>

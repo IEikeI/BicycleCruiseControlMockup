@@ -195,14 +195,14 @@ public class BLEManageFragment extends Fragment {
         // Inflate the layout for this fragment
         View bleManagerView = inflater.inflate(R.layout.fragment_ble_manager, container, false);
 
-        Button secureScanBtn = (Button) bleManagerView.findViewById(R.id.button_secure_scan);
+        /*Button secureScanBtn = (Button) bleManagerView.findViewById(R.id.button_secure_scan);
         secureScanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
             }
-        });
+        });*/
 
         Button insecureScanBtn = (Button) bleManagerView.findViewById(R.id.button_insecure_scan);
         insecureScanBtn.setOnClickListener(new View.OnClickListener() {
@@ -213,14 +213,14 @@ public class BLEManageFragment extends Fragment {
             }
         });
 
-        Button discoverableBtn = (Button) bleManagerView.findViewById(R.id.button_discoverable);
+        /*Button discoverableBtn = (Button) bleManagerView.findViewById(R.id.button_discoverable);
         secureScanBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Ensure this device is discoverable by others
                 ensureDiscoverable();
             }
-        });
+        });*/
 
 
         FloatingActionButton fab_emer = (FloatingActionButton) bleManagerView.findViewById(R.id.fab_emergency);
