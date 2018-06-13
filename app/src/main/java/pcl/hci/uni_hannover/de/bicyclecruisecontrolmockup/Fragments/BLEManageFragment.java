@@ -62,6 +62,8 @@ import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.R;
 public class BLEManageFragment extends Fragment {
 
     private static final String TAG = "BLEManageFragment";
+    private static final boolean D = true;
+
     private OnBLEManageFragmentInteractionListener mListener;
 
     // TODO: Rename and change types of parameters
@@ -73,14 +75,29 @@ public class BLEManageFragment extends Fragment {
     private String mParam2;
 
     // Intent request codes
-    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
-    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
-    private static final int REQUEST_ENABLE_BT = 3;
+    //rework, cause we cant use the secure channel for multiple connection
+    //private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
+    //private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
+    //private static final int REQUEST_ENABLE_BT = 3;
+    private static final int REQUEST_CONNECT_DEVICE = 1;
+    private static final int REQUEST_ENABLE_BT = 2;
+
+    //types from BluetoothMSGService
+    public static final int MESSAGE_STATE_CHANGE = 1;
+    public static final int MESSAGE_READ = 2;
+    public static final int MESSAGE_WRITE = 3;
+    public static final int MESSAGE_DEVICE_NAME = 4;
+    public static final int MESSAGE_TOAST = 5;
+
+    //Key-Names / tmp Placeholder
+    public static final String DEVICE_NAME = "device_name";
+    public static final String TOAST = "toast";
 
     // Layout Views
     private ListView mConversationView;
     private EditText mOutEditText;
     private Button mSendButton;
+    private TextView mtextHeader;
 
     /**
      * Name of the connected device
@@ -169,10 +186,8 @@ public class BLEManageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
             FragmentActivity activity = getActivity();
             Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
@@ -192,7 +207,6 @@ public class BLEManageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View bleManagerView = inflater.inflate(R.layout.fragment_ble_manager, container, false);
 
         /*Button secureScanBtn = (Button) bleManagerView.findViewById(R.id.button_secure_scan);
@@ -209,7 +223,7 @@ public class BLEManageFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
             }
         });
 
@@ -222,6 +236,7 @@ public class BLEManageFragment extends Fragment {
             }
         });*/
 
+        mtextHeader = (TextView) bleManagerView.findViewById(R.id.textHeader);
 
         FloatingActionButton fab_emer = (FloatingActionButton) bleManagerView.findViewById(R.id.fab_emergency);
         fab_emer.setOnClickListener(new View.OnClickListener() {
@@ -235,16 +250,8 @@ public class BLEManageFragment extends Fragment {
         });
 
         mRecyclerView = (RecyclerView) bleManagerView.findViewById(R.id.recycler_view_connected);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-        // use a linear layout manager
-        //mLayoutManager = new LinearLayoutManager();
-        //mRecyclerView.setLayoutManager(mLayoutManager);
-
-        // specify an adapter (see also next example)
         mAdapter = new BLEDeviceAdapter(bleDevices.getConnectedDevices());
         mRecyclerView.setAdapter(mAdapter);
 
@@ -254,17 +261,19 @@ public class BLEManageFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if(D) Log.e(TAG, "++ ON START ++");
+
         // If BT is not on, request that it be enabled.
-        // setupConversation() will then be called during onActivityResult
+        // setupChat() will then be called during onActivityResult
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
-        } else if (mMSGServices == null){
-            setupConversation(0);
+        } else {
+            if (mMSGService == null) setupConversation(2);
         }
 
-        /*else if (mMSGServices != null) {
+          /*else if (mMSGServices != null) {
             for(int i = 1; i < mMSGServices.length; i++) {
                 if (mMSGServices[i] == null){
                     setupConversation(0, mMSGService);
@@ -274,32 +283,33 @@ public class BLEManageFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mMSGServices != null) {
-            for(int i = 1; i < mMSGServices.length; i++) {
-                if (mMSGServices[i] != null) {
-                    mMSGServices[i].stop();
-                }
-            }
-        }
+    public synchronized void onPause() {
+        super.onPause();
+        if(D) Log.e(TAG, "- ON PAUSE -");
     }
 
     @Override
-    public void onResume() {
+    public void onStop() {
+        super.onStop();
+        if(D) Log.e(TAG, "-- ON STOP --");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mMSGService != null) mMSGService.stop();
+        if(D) Log.e(TAG, "--- ON DESTROY ---");
+    }
+
+
+    //public void onResume() {
+    @Override
+    public synchronized void onResume() {
         super.onResume();
-        if (mMSGServices != null) {
-            for(int i = 1; i < mMSGServices.length; i++) {
-                // Performing this check in onResume() covers the case in which BT was
-                // not enabled during onStart(), so we were paused to enable it...
-                // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
-                if (mMSGServices[i] != null) {
-                    // Only if the state is STATE_NONE, do we know that we haven't started already
-                    if (mMSGServices[i].getState() == BluetoothMsgService.STATE_NONE) {
-                        // Start the Bluetooth chat services
-                        mMSGServices[i].start();
-                    }
-                }
+        if(D) Log.e(TAG, "+ ON RESUME +");
+        if (mMSGService != null) {
+            if (mMSGService.getState() == BluetoothMsgService.STATE_NONE) {
+                mMSGService.start();
             }
         }
     }
@@ -317,18 +327,13 @@ public class BLEManageFragment extends Fragment {
     private void setupConversation(int index){ //BluetoothMsgService msgService) {
         Log.d(TAG, "setupConversation()");
 
-        // Initialize the array adapter for the conversation thread
         mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
-
         mConversationView.setAdapter(mConversationArrayAdapter);
 
-        // Initialize the compose field with a listener for the return key
         mOutEditText.setOnEditorActionListener(mWriteListener);
 
-        // Initialize the send button with a listener that for click events
         mSendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // Send a message using content of the edit text widget
                 View view = getView();
                 if (null != view) {
                     TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
@@ -338,7 +343,6 @@ public class BLEManageFragment extends Fragment {
             }
         });
 
-        // Initialize the BluetoothMSGService to perform bluetooth connections
         //msgService = new BluetoothMsgService(getActivity(), mHandler);
         mMSGService = new BluetoothMsgService(getActivity(), mHandler);
         mMSGServices = new BluetoothMsgService[10]; //fixed size for now
@@ -355,6 +359,7 @@ public class BLEManageFragment extends Fragment {
      * Makes this device discoverable for 300 seconds (5 minutes).
      */
     public void ensureDiscoverable() {
+        if(D) Log.d(TAG, "ensure discoverable");
         if (mBluetoothAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
@@ -369,19 +374,14 @@ public class BLEManageFragment extends Fragment {
      * @param message A string of text to send.
      */
     private void sendMessage(String message){ //BluetoothMsgService msgService) {
-        // Check that we're actually connected before trying anything
         if (mMSGService.getState() != BluetoothMsgService.STATE_CONNECTED) {
             Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Check that there's actually something to send
         if (message.length() > 0) {
-            // Get the message bytes and tell the BluetoothChatService to write
             byte[] send = message.getBytes();
             mMSGService.write(send);
-
-            // Reset out string buffer to zero and clear the edit text field
             mOutStringBuffer.setLength(0);
             mOutEditText.setText(mOutStringBuffer);
         }
@@ -393,21 +393,15 @@ public class BLEManageFragment extends Fragment {
      * @param message A string of text to send to all devices.
      */
     private void sendMessageToAll(String message) {
-        //start from index 1, 0 is an placeHolder
         for(int i = 1; i < mMSGServices.length; i++){
-            // Check that we're actually connected before trying anything
             if (mMSGServices[i].getState() != BluetoothMsgService.STATE_CONNECTED) {
                 Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Check that there's actually something to send
             if (message.length() > 0) {
-                // Get the message bytes and tell the BluetoothChatService to write
                 byte[] send = message.getBytes();
                 mMSGServices[i].write(send);
-
-                // Reset out string buffer to zero and clear the edit text field
                 mOutStringBuffer.setLength(0);
                 mOutEditText.setText(mOutStringBuffer);
             }
@@ -469,93 +463,81 @@ public class BLEManageFragment extends Fragment {
      */
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
-        @SuppressLint("StringFormatInvalid")
         @Override
         public void handleMessage(Message msg) {
-            FragmentActivity activity = getActivity();
             switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
+                case MESSAGE_STATE_CHANGE:
+                    if(D) Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
                     switch (msg.arg1) {
                         case BluetoothMsgService.STATE_CONNECTED:
-                            setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            mtextHeader.setText(R.string.title_connected_to);
+                            mtextHeader.append(mConnectedDeviceName);
                             mConversationArrayAdapter.clear();
                             break;
                         case BluetoothMsgService.STATE_CONNECTING:
-                            setStatus(R.string.title_connecting);
+                            mtextHeader.setText(R.string.title_connecting);
                             break;
                         case BluetoothMsgService.STATE_LISTEN:
                         case BluetoothMsgService.STATE_NONE:
-                            setStatus(R.string.title_not_connected);
+                            mtextHeader.setText(R.string.title_not_connected);
                             break;
                     }
                     break;
-                case Constants.MESSAGE_WRITE:
+                case MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     mConversationArrayAdapter.add("Me:  " + writeMessage);
                     break;
-                case Constants.MESSAGE_READ:
+                case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    if (readMessage.length() > 0) {
+                        mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
+                    }
                     break;
-                case Constants.MESSAGE_DEVICE_NAME:
+                case MESSAGE_DEVICE_NAME:
                     // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    if (null != activity) {
-                        Toast.makeText(activity, "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    }
+                    mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
+                    Toast.makeText(getActivity(), "Connected to "
+                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     break;
-                case Constants.MESSAGE_TOAST:
-                    if (null != activity) {
-                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
-                    }
+                case MESSAGE_TOAST:
+                    //if (!msg.getData().getString(TOAST).contains("Unable to connect device")) {
+                    Toast.makeText(getActivity(), msg.getData().getString(TOAST),
+                            Toast.LENGTH_SHORT).show();
+                    //}
                     break;
             }
         }
     };
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(D) Log.d(TAG, "onActivityResult " + resultCode);
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
+            case REQUEST_CONNECT_DEVICE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
-                    connectDevice(data, true);
-                }
-                break;
-            case REQUEST_CONNECT_DEVICE_INSECURE:
-                // When DeviceListActivity returns with a device to connect
-                if (resultCode == Activity.RESULT_OK) {
-                    connectDevice(data, false);
-                    String name = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_NAME);
-                    String mac = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-                    int deviceId = 1;
-                    if(bleDevices.getConnectedDevices() != null){
-                        deviceId = bleDevices.getConnectedDevices().size() +1;
-                    }
-                    BLEDevice device = new BLEDevice(name, mac, deviceId);
-                    //Snackbar.make(getView(), "Device Name: "+device.getName()+", Address:"+device.getUUID() + deviceName, Snackbar.LENGTH_LONG)
-                      //      .setAction("Action", null).show();
-                    addBLEDevice(device);
-                    mAdapter.notifyDataSetChanged();
-                    mRecyclerView.invalidate();
-                    refreshRecView();
+                    // Get the device MAC address
+                    String address = data.getExtras()
+                            .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                    // Get the BLuetoothDevice object
+                    BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+                    // Attempt to connect to the device
+                    mMSGService.connect(device);
                 }
                 break;
             case REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so set up a chat session
-                    setupConversation(0);
+                    setupConversation(2);
                 } else {
-                    // User did not enable Bluetooth or an error occurred
+                    // User did not enable Bluetooth or an error occured
                     Log.d(TAG, "BT not enabled");
-                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving,
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),
+                            R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
         }
