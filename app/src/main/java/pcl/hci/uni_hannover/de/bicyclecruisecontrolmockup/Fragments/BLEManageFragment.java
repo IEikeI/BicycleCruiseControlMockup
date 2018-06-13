@@ -263,12 +263,9 @@ public class BLEManageFragment extends Fragment {
         super.onStart();
         if(D) Log.e(TAG, "++ ON START ++");
 
-        // If BT is not on, request that it be enabled.
-        // setupChat() will then be called during onActivityResult
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
         } else {
             if (mMSGService == null) setupConversation(2);
         }
@@ -415,7 +412,6 @@ public class BLEManageFragment extends Fragment {
     private TextView.OnEditorActionListener mWriteListener
             = new TextView.OnEditorActionListener() {
         public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
-            // If the action is a key-up event on the return key, send the message
             if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_UP) {
                 String message = view.getText().toString();
                 //sendMessage(message);
@@ -485,20 +481,17 @@ public class BLEManageFragment extends Fragment {
                     break;
                 case MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
-                    // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
                     mConversationArrayAdapter.add("Me:  " + writeMessage);
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     if (readMessage.length() > 0) {
                         mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
                     }
                     break;
                 case MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
                     Toast.makeText(getActivity(), "Connected to "
                             + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
@@ -517,24 +510,20 @@ public class BLEManageFragment extends Fragment {
         if(D) Log.d(TAG, "onActivityResult " + resultCode);
         switch (requestCode) {
             case REQUEST_CONNECT_DEVICE:
-                // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
-                    // Get the device MAC address
-                    String address = data.getExtras()
-                            .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-                    // Get the BLuetoothDevice object
+                    String address = "";
+                    if(data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS) != null){
+                        address = data.getExtras()
+                                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                    }
                     BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-                    // Attempt to connect to the device
                     mMSGService.connect(device);
                 }
                 break;
             case REQUEST_ENABLE_BT:
-                // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
-                    // Bluetooth is now enabled, so set up a chat session
                     setupConversation(2);
                 } else {
-                    // User did not enable Bluetooth or an error occured
                     Log.d(TAG, "BT not enabled");
                     Toast.makeText(getActivity(),
                             R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
@@ -550,12 +539,15 @@ public class BLEManageFragment extends Fragment {
      * @param secure Socket Security type - Secure (true) , Insecure (false)
      */
     private void connectDevice(Intent data, boolean secure) {
-        // Get the device MAC address
-        String address = data.getExtras()
-                .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-        // Get the BluetoothDevice object
+        //TODO: is this needed?
+        String address = "";
+        if(data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS) != null){
+            address = data.getExtras()
+                    .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        }
+
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-        // Attempt to connect to the device
+        //reworked - there is no secure channel anymore
         //mMSGService.connect(device, secure);
         mMSGService.connect(device);
     }
@@ -577,7 +569,7 @@ public class BLEManageFragment extends Fragment {
 
     /**
      * Helper for notifying added BLE connections and Syncs the list-adding and recycler view
-     * @param device
+     * @param device a Bluetooth Low Energy Device
      */
     private void addBLEDevice(BLEDevice device){
         int insertIndex = 0;
@@ -597,8 +589,8 @@ public class BLEManageFragment extends Fragment {
 
     /**
      * Helper for notifying removed BLE connections and update the view
-     * @param position
-     * @param list
+     * @param position Position of the Element in the view
+     * @param list Used list of Bluetooth devices
      */
     private void removeFromRecView(int position, ArrayList<BLEDevice> list){
         if(list.get(position) != null){
