@@ -19,7 +19,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Fragments.BLEManageFragment;
 import pcl.hci.uni_hannover.de.bicyclecruisecontrolmockup.Logger.Log;
 
 /**
@@ -168,6 +167,8 @@ public class BluetoothMsgService {
      */
     public synchronized void connect(BluetoothDevice device) {
         if (D) Log.d(TAG, "connect to: " + device);
+
+        //Toast.makeText(getActivity(), "Test"+device.getAddress(), Toast.LENGTH_LONG).show();
 
         if (mState == STATE_CONNECTING) {
             if (mConnectThread != null) {mConnectThread.cancel(); mConnectThread = null;}

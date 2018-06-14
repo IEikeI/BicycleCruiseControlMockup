@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Set;
 
@@ -149,6 +150,7 @@ public class DeviceListActivity extends Activity {
 
                     Intent intent = new Intent();
                     intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+                    Toast.makeText(getApplication(), "Adresse:"+address, Toast.LENGTH_SHORT).show();
                     intent.putExtra(EXTRA_DEVICE_NAME, name);
 
                     setResult(Activity.RESULT_OK, intent);

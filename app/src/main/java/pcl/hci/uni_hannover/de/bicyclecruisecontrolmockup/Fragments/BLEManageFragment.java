@@ -334,7 +334,8 @@ public class BLEManageFragment extends Fragment {
                 View view = getView();
                 if (null != view) {
                     TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
-                    String message = textView.getText().toString();
+                    //String message = textView.getText().toString();
+                    String message = "Dies ist ein Test";
                     sendMessage(message); //TODO change for multiple Services
                 }
             }
@@ -455,7 +456,7 @@ public class BLEManageFragment extends Fragment {
     }
 
     /**
-     * The Handler that gets information back from the BluetoothChatService
+     * The Handler that gets information back from the BluetoothMsgService
      */
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
@@ -518,6 +519,7 @@ public class BLEManageFragment extends Fragment {
                     }
                     BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
                     mMSGService.connect(device);
+                    //Toast.makeText(getActivity(), "Test"+device.getAddress(), Toast.LENGTH_LONG).show();
                 }
                 break;
             case REQUEST_ENABLE_BT:
